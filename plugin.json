@@ -1,0 +1,27 @@
+{
+  "name": "ExternalVisitId",
+  "version": "0.1.0",
+  "description": "Adds an external_visit_id to the Piwik Tracker API and creates new visits whenever an unknown external_visit_id comes in.",
+  "theme": false,
+  "keywords": [
+    "piwik",
+    "visit"
+  ],
+  "license": "GPL v3+",
+  "homepage": "http://www.advanced-online-marketing.com",
+  "require": {
+    "piwik": ">=3.0.0,<4.0.0-b1"
+  },
+  "support": {
+    "issues": "https://github.com/advanced-online-marketing/ExternalVisitId/issues",
+    "source": "https://github.com/advanced-online-marketing/ExternalVisitId",
+    "wiki": "https://github.com/advanced-online-marketing/ExternalVisitId/wiki"
+  },
+  "authors": [
+    {
+      "name": "André Kolell",
+      "email": "andre.kolell@gmail.com",
+      "homepage": "http://www.andrekolell.de"
+    }
+  ]
+}
