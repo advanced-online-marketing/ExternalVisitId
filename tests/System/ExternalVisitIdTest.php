@@ -24,11 +24,6 @@ class ExternalVisitIdTest extends IntegrationTestCase
      */
     public static $fixture = null; // initialized below class definition
 
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     /**
      * Tests if the fixtures have filled up the external_visit_id column correctly.
      */
