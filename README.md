@@ -11,6 +11,7 @@ an `external_visit_id`. Whether or not a new visit will be created within Piwik 
 [here](https://piwik.org/faq/how-to/faq_19616/))
 * A visitor comes from a different HTTP referrer (disabled by default, see 
 [here](https://piwik.org/faq/how-to/faq_19616/))
+* A user ID is being passed, see [here](https://piwik.org/docs/user-id/#how-requests-with-a-user-id-are-tracked)
 
 You can only force Piwik [to create a new visit](https://piwik.org/faq/how-to/faq_187/) by passing `&new_visit=1` to 
 the Tracking HTTP API. 
@@ -29,6 +30,10 @@ setting in `config/config.ini.php`:
     visit_standard_length = 86400
     create_new_visit_when_campaign_changes = 0
     create_new_visit_when_website_referrer_changes = 0
+
+As Piwik merges and splits visits also based on 
+[user IDs](https://piwik.org/docs/user-id/#how-requests-with-a-user-id-are-tracked), you are not allowed to pass them
+any more.
 
 You might also need to disable external plugin functionality that forces the creation of new visits, e.g. in 
 [Piwik AOM](https://github.com/advanced-online-marketing/AOM) by disabling the config option "Create new visit when 
