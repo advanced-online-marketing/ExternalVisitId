@@ -62,7 +62,8 @@ class ExternalVisitId extends VisitDimension
         }
 
         // Is this an existing visit?
-        $lastExternalVisitId = Db::fetchOne(
+        // Overflow would happen at 9223372036854775807 on 64-bit systems.
+        $lastExternalVisitId = (int) Db::fetchOne(
             'SELECT external_visit_id FROM ' . Common::prefixTable('log_visit') . ' WHERE idvisit = ?',
             [$visitor->visitProperties->getProperty('idvisit')]
         );
