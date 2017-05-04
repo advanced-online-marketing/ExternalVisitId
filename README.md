@@ -74,7 +74,7 @@ currently no hook/event or something similar to do so:
         $persistedVisitAttributes = $this->getVisitFieldsPersist();
 
         // We must not care about system config, visit_last_action_time etc. as only the externalVisitId is relevant!
-        $visitRow = Tracker::getDatabase()->fetch(
+        $visitRow = \Piwik\Tracker::getDatabase()->fetch(
             'SELECT ' . implode(', ', $persistedVisitAttributes) . ' FROM ' . Common::prefixTable('log_visit')
             . ' WHERE idsite = ? AND idvisitor = ? AND external_visit_id = ? '
             . ' ORDER BY visit_last_action_time DESC LIMIT 1',
