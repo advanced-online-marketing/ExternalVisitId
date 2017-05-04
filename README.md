@@ -39,6 +39,93 @@ You might also need to disable external plugin functionality that forces the cre
 [Piwik AOM](https://github.com/advanced-online-marketing/AOM) by disabling the config option "Create new visit when 
 campaign changes". 
 
+The worst thing is that you must manually override `Piwik\Tracker\VisitorRecognizer.findKnownVisitor()` as there is
+currently no hook/event or something similar to do so:
+
+    /**
+     * This method has been manually overridden by the ExternalVisitId plugin
+     * 
+     * @param $configId
+     * @param VisitProperties $visitProperties
+     * @param Request $request
+     * @return bool
+     * @throws \Exception
+     */
+    public function findKnownVisitor($configId, VisitProperties $visitProperties, Request $request)
+    {
+        // Make sure that both are supplied, visitorId and visitId!
+        if (!$request->getVisitorId()) {
+            throw new \Exception('VisitorRecognizer.findKnownVisitor() override requires visitorId in request.');
+        }
+        $idVisitor = $request->getVisitorId();
+
+        $requestParams = $request->getParams();
+        if (!isset($requestParams['external_visit_id'])) {
+            throw new \Exception('VisitorRecognizer.findKnownVisitor() override requires externalVisitId in request.');
+        }
+        $externalVisitId = $requestParams['external_visit_id'];
+
+        Common::printDebug(
+            'Matching visitor based on visitorId ' . hexdec(bin2hex($idVisitor))
+            . ' and visit based on externalVisitId ' . $externalVisitId . '.'
+        );
+
+        $visitProperties->setProperty('idvisitor', $idVisitor);
+        $persistedVisitAttributes = $this->getVisitFieldsPersist();
+
+        // We must not care about system config, visit_last_action_time etc. as only the externalVisitId is relevant!
+        $visitRow = Tracker::getDatabase()->fetch(
+            'SELECT ' . implode(', ', $persistedVisitAttributes) . ' FROM ' . Common::prefixTable('log_visit')
+            . ' WHERE idsite = ? AND idvisitor = ? AND external_visit_id = ? '
+            . ' ORDER BY visit_last_action_time DESC LIMIT 1',
+            [
+                $request->getIdSite(),
+                $idVisitor,
+                $externalVisitId,
+            ]
+        );
+
+
+        if ($visitRow && count($visitRow) > 0) {
+
+            // These values will be used throughout the request
+            foreach ($persistedVisitAttributes as $field) {
+                $visitProperties->setProperty($field, $visitRow[$field]);
+            }
+
+            // TODO: Compare if later/earlier?!
+            $visitProperties->setProperty('visit_last_action_time', strtotime($visitRow['visit_last_action_time']));
+            $visitProperties->setProperty('visit_first_action_time', strtotime($visitRow['visit_first_action_time']));
+
+            // Custom Variables copied from Visit in potential later conversion
+            if (!empty($numCustomVarsToRead)) {
+                for ($i = 1; $i <= $numCustomVarsToRead; $i++) {
+                    if (isset($visitRow['custom_var_k' . $i])
+                        && strlen($visitRow['custom_var_k' . $i])
+                    ) {
+                        $visitProperties->setProperty('custom_var_k' . $i, $visitRow['custom_var_k' . $i]);
+                    }
+                    if (isset($visitRow['custom_var_v' . $i])
+                        && strlen($visitRow['custom_var_v' . $i])
+                    ) {
+                        $visitProperties->setProperty('custom_var_v' . $i, $visitRow['custom_var_v' . $i]);
+                    }
+                }
+            }
+
+            Common::printDebug(
+                'Matched Piwik visit ' . $visitRow['idvisit'] . ' based on visitorId ' . hexdec(bin2hex($idVisitor))
+                . ' and externalVisitId ' . $externalVisitId . '.'
+            );
+
+            return true;
+        }
+
+        Common::printDebug('The visit could not be match with an existing one...');
+
+        return false;
+    }
+
 
 #### Testing this plugin
 
