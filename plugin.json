@@ -1,6 +1,6 @@
 {
   "name": "ExternalVisitId",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Adds an external_visit_id to the Piwik Tracker API and creates new visits whenever an unknown external_visit_id comes in.",
   "theme": false,
   "keywords": [

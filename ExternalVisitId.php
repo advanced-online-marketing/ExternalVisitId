@@ -43,7 +43,7 @@ class ExternalVisitId extends \Piwik\Plugin
 
         // We just check that some random strings exist
         if (!strpos($code, 'This method has been manually overridden by the ExternalVisitId plugin')
-            || !strpos($code, '$externalVisitIds')
+            || !strpos($code, '$externalVisitId')
             || !strpos($code, 'WHERE idsite = ? AND idvisitor = ? AND external_visit_id = ?')
         ) {
             throw new \Exception(
