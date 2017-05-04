@@ -130,3 +130,13 @@ currently no hook/event or something similar to do so:
 #### Testing this plugin
 
 Execute tests by running `./console tests:run ExternalVisitId --group ExternalVisitId`.
+
+
+## Installation on Ubuntu
+
+As this plugin is not available on Piwik's marketplace, it must be installed manually.
+
+From Piwik's plugin directory:
+
+    sudo wget https://github.com/advanced-online-marketing/ExternalVisitId/archive/master.zip && sudo unzip master.zip && sudo rm master.zip && sudo chown -R www-data:www-data ExternalVisitId-master
+    sudo rm -Rf ExternalVisitId && sudo mv ExternalVisitId-master ExternalVisitId
