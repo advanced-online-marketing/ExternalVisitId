@@ -2,6 +2,9 @@
 
 namespace Piwik\Plugins\ExternalVisitId;
 
+use Piwik\Config;
+use Piwik\Tracker\TrackerConfig;
+
 class ExternalVisitId extends \Piwik\Plugin
 {
     /**
@@ -18,7 +21,7 @@ class ExternalVisitId extends \Piwik\Plugin
     public function registerEvents()
     {
         return [
-            'Tracker.makeNewVisitObject' => 'validateVisitorRecognizerOverride',
+            'Tracker.makeNewVisitObject' => 'validatePluginRequirements',
         ];
     }
 
@@ -37,7 +40,30 @@ class ExternalVisitId extends \Piwik\Plugin
      * @param $visit
      * @throws \Exception
      */
-    public function validateVisitorRecognizerOverride(&$visit)
+    public function validatePluginRequirements(&$visit)
+    {
+        if (86400 > Config::getInstance()->Tracker['visit_standard_length']) {
+            throw new \Exception(
+                'Tracker config "visit_standard_length" should be at least 86400'
+            );
+        }
+
+        if (0 !== TrackerConfig::getConfigValue('create_new_visit_when_campaign_changes')) {
+            throw new \Exception(
+                'Tracker config "create_new_visit_when_campaign_changes" must be 0'
+            );
+        }
+
+        if (0 !== TrackerConfig::getConfigValue('create_new_visit_when_website_referrer_changes')) {
+            throw new \Exception(
+                'Tracker config "create_new_visit_when_website_referrer_changes" must be 0'
+            );
+        }
+
+        $this->validateVisitorRecognizerOverride();
+    }
+
+    private function validateVisitorRecognizerOverride()
     {
         $code = file_get_contents(PIWIK_INCLUDE_PATH . '/core/Tracker/VisitorRecognizer.php');
 

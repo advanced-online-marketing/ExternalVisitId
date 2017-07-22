@@ -121,7 +121,7 @@ currently no hook/event or something similar to do so:
             return true;
         }
 
-        Common::printDebug('The visit could not be match with an existing one...');
+        Common::printDebug('The visit could not be matched with an existing one...');
 
         return false;
     }
