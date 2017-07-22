@@ -23,7 +23,7 @@ class ExternalVisitId extends VisitDimension
     public function install()
     {
         $changes = parent::install();
-        $changes['log_visit'][] = 'ADD INDEX index_external_visit_id (external_visit_id)';
+        $changes['log_visit'][] = 'ADD UNIQUE INDEX index_external_visit_id (external_visit_id)';
 
         return $changes;
     }
